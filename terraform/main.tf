@@ -7,15 +7,15 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
 }
 
-module "rds" {
-  source          = "./modules/rds"
-  project_name    = "db-${var.project_name}"
-  environment     = var.environment
-  vpc_id          = module.vpc.vpc_id
-  private_subnets = module.vpc.private_subnet_ids
-  db_username     = var.db_username
-  db_password     = var.db_password
-}
+# module "rds" {
+#   source          = "./modules/rds"
+#   project_name    = "db-${var.project_name}"
+#   environment     = var.environment
+#   vpc_id          = module.vpc.vpc_id
+#   private_subnets = module.vpc.private_subnet_ids
+#   db_username     = var.db_username
+#   db_password     = var.db_password
+# }
 
 
 # module "ecr" {
