@@ -19,6 +19,8 @@ spec:
       containers:
       - name: py-app
         image: 071540691508.dkr.ecr.us-east-1.amazonaws.com/8byte-app-repo:3f7a474a6041a391982b5d579312f23ae9b83015
+        command: ["gunicorn"]
+        args: ["-w", "4", "-b", "0.0.0.0:5000", "app:app"]
         ports:
         - containerPort: 5000
         env:

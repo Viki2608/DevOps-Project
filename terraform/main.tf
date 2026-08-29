@@ -29,6 +29,7 @@ module "eks" {
   environment           = var.environment
   vpc_id                = module.vpc.vpc_id
   private_subnets       = module.vpc.private_subnet_ids
+  public_subnets        = module.vpc.public_subnet_ids
   rds_security_group_id = module.rds.rds_security_group_id
 }
 

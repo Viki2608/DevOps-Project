@@ -21,7 +21,7 @@ resource "aws_eks_cluster" "main" {
   version  = "1.35"
 
   vpc_config {
-    subnet_ids = var.private_subnets
+    subnet_ids = concat(var.private_subnets, var.public_subnets)
   }
 
   depends_on = [aws_iam_role_policy_attachment.cluster_policy]

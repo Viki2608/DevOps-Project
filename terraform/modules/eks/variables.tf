@@ -22,3 +22,8 @@ variable "rds_security_group_id" {
   description = "The security group ID of the RDS instance"
   type        = string
 }
+
+variable "public_subnets" {
+  description = "List of public subnet IDs for the EKS cluster"
+  type        = list(string)
+}

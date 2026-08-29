@@ -139,7 +139,12 @@ graph TD
 
 ## Observability & Monitoring
 - **Prometheus & Grafana**: The `kube-prometheus-stack` is deployed into the cluster to automatically collect node metrics, pod metrics, and provide visualization dashboards.
-  - **Accessing Grafana**: Run `kubectl port-forward svc/prometheus-grafana -n monitoring 8080:80` and open http://localhost:8080 in your browser. (Default credentials: `admin` / `prom-operator`).
+  - **Accessing Grafana**: 
+    1. Run `kubectl port-forward svc/prometheus-grafana -n monitoring 8080:80` and open http://localhost:8080 in your browser.
+    2. The username is `admin`. To get the password, run the following command:
+       ```bash
+       kubectl get secret prometheus-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
+       ```
   - **Accessing Prometheus**: Run `kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090` and open http://localhost:9090 in your browser.
   - **Custom Dashboards**: A "Simple Cluster Metrics (Node & Pod)" dashboard is automatically provisioned via ConfigMap to monitor CPU and RAM usage.
 - **Application Instrumentation**: The Python Flask application is instrumented with `prometheus-flask-exporter` to expose a `/metrics` endpoint.
