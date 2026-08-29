@@ -6,11 +6,16 @@ terraform {
       version = "~> 5.0"
     }
   }
-  # backend "s3" {} # Configure remote backend for team state management
+  backend "s3" {
+    bucket       = "octabyte"
+    key          = "dev/terraform.tfstate"
+    use_lockfile = true
+    region       = "us-east-1"
+  }
 }
 
 provider "aws" {
-  region     = var.aws_region
+  region = var.aws_region
   default_tags {
     tags = {
       Environment = var.environment
