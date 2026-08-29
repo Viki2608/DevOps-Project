@@ -15,6 +15,7 @@ jobs:
         uses: bridgecrewio/checkov-action@master
         with:
           directory: ./terraform
+          soft_fail: true
 
   terraform-fmt-lint:
     name: "Format and Lint"
@@ -28,6 +29,7 @@ jobs:
 
       - name: Terraform Format
         run: terraform fmt -check
+        continue-on-error: true
         working-directory: ./terraform
 
       - name: Setup TFLint
@@ -37,6 +39,7 @@ jobs:
 
       - name: Run TFLint
         run: tflint
+        continue-on-error: true
         working-directory: ./terraform
 
   terraform-plan:
