@@ -1,6 +1,17 @@
-# Octa Byte AI - DevOps Assignment
+<div align="center">
+  <h1>🚀 Octa Byte AI - DevOps Assignment</h1>
+  <p><b>Infrastructure and deployment automation code for the Octa Byte AI interview assignment</b></p>
 
-This repository contains the infrastructure and deployment automation code for the Octa Byte AI interview assignment.
+  <!-- Badges -->
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
+  <img src="https://img.shields.io/badge/FluxCD-000000?style=for-the-badge&logo=flux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+</div>
+
+---
 
 ## Architecture
 
@@ -20,14 +31,16 @@ The infrastructure is provisioned on AWS using Terraform and consists of the fol
 
 ### Architecture Diagram
 
-[View on Eraser![](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty/preview?diagram=bDv3PDw8WPqLbHnZ-ArkJ&type=embed)](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty?diagram=bDv3PDw8WPqLbHnZ-ArkJ)
+[View on Eraser![](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty/preview?diagram=nOF4fc2z-LwM8T_3Smy3&type=embed)](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty?diagram=nOF4fc2z-LwM8T_3Smy3)
 
 ```mermaid
 graph TD
-    User([User/Browser]) --> ALB[AWS Load Balancer]
+    User([User/Browser]) --> ALB[App AWS Load Balancer]
+    User --> Vault_ALB[Vault AWS Load Balancer]
     
     subgraph "AWS Cloud (VPC)"
-        ALB --> EKS_Ingress[EKS Service: LoadBalancer]
+        ALB --> EKS_Ingress[App Service: LoadBalancer]
+        Vault_ALB --> Vault_Ingress[Vault Service: LoadBalancer]
         
         subgraph "Public Subnets"
             NAT[NAT Gateways]
@@ -36,10 +49,10 @@ graph TD
         subgraph "Private Subnets"
             subgraph "EKS Cluster"
                 EKS_Ingress --> Pods[Python Flask Pods]
+                Vault_Ingress --> Vault[HashiCorp Vault]
                 Pods --> SA[Service Account with Pod Identity]
                 VSO[Vault Secrets Operator]
                 Flux[FluxCD GitOps]
-                Vault[HashiCorp Vault]
                 Prometheus["Prometheus & Grafana\n(Kube State Metrics + Node Exporter)"]
                 MetricsServer[Metrics Server]
                 FluentBit[Fluent Bit DaemonSet]
@@ -67,7 +80,22 @@ graph TD
     end
 ```
 
-## Infrastructure Setup
+## 🛡️ DevSecOps & CI/CD Pipeline
+
+The project implements a comprehensive CI/CD pipeline using GitHub Actions, integrating multiple **DevSecOps** practices to ensure security at every stage of the software development lifecycle.
+
+### Pull Request Validation (`app-pr.yml`)
+- 🔍 **Secrets Scanning (Gitleaks)**: Automatically scans every commit and PR for hardcoded secrets, API keys, and tokens to prevent accidental exposure.
+- 🧪 **Automated Testing (Pytest)**: Runs unit tests for the Python application, ensuring code changes don't break existing functionality.
+- 🐳 **Container Security (Trivy)**: Scans the built Docker image for OS and library vulnerabilities. The build fails if `CRITICAL` or `HIGH` vulnerabilities are found.
+- 📦 **SBOM Generation (Trivy)**: Generates a Software Bill of Materials (SBOM) in SPDX-JSON format for supply chain security and transparency.
+
+### Continuous Deployment (`app-release.yml` & `release.yml`)
+- 🏗️ **Infrastructure as Code (Terraform)**: Validates and plans infrastructure changes on pull requests, and automatically applies them upon merging to `main`.
+- 🚢 **Automated Image Build & Push**: Automatically builds the Docker image and pushes it to Amazon ECR upon merging.
+- 🔄 **GitOps Delivery (FluxCD)**: Automatically updates the Kubernetes manifests in the repository with the new image tag. FluxCD detects the drift and securely syncs the changes to the live cluster.
+
+## 🛠️ Infrastructure Setup
 
 1. **Prerequisites**:
    - AWS CLI installed and configured.
@@ -89,11 +117,7 @@ graph TD
    ```
 
 4. **Deploying the Application**:
-   Once you have access to the EKS cluster, apply the Kubernetes manifests:
-   ```bash
-   kubectl apply -f k8s/deployment.yaml
-   kubectl apply -f k8s/service.yaml
-   ```
+   The application is deployed automatically using FluxCD (GitOps). Flux continuously monitors the `k8s/` directory in this repository and automatically applies any Kubernetes manifests found there. **Do not apply manifests manually.**
 
 5. **Creating Secrets in Vault**:
    The Vault UI is exposed via a LoadBalancer. You can access it to manually create and manage secrets.
