@@ -18,7 +18,7 @@ spec:
       serviceAccountName: app-service-account
       containers:
       - name: py-app
-        image: 8byte-app-repo:latest # Note: CI/CD will replace this with actual ECR image URI
+        image: 071540691508.dkr.ecr.us-east-1.amazonaws.com/8byte-app-repo:540ea002920ecabeab68cc67d534b74ee3946c87
         ports:
         - containerPort: 5000
         env:
