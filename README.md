@@ -193,20 +193,25 @@ The project implements a comprehensive CI/CD pipeline using GitHub Actions, inte
    - *Challenge*: Why `access_config` (EKS Access Entries) or the traditional `aws-auth` ConfigMap was not explicitly added to the EKS module.
    - *Resolution*: By default, Amazon EKS automatically grants the IAM principal (User or Role) that creates the cluster `system:masters` permissions in the cluster's RBAC configuration. Since the same IAM identity running the Terraform script will also be interacting with the cluster, explicitly defining `access_config` (the new EKS Access API) or the legacy `aws-auth` ConfigMap is not strictly necessary for initial bootstrapping and access.
 
-## Improvements and Security Best Practices (To Be Implemented)
+## 📝 Next Steps (TODOs)
 
-### 1. ECR Image Pulls via AWS Backbone
-Currently, EKS nodes in private subnets pull images from ECR by routing traffic through the NAT Gateway and over the public internet before reaching ECR.
-**Improvement**: We can configure **VPC Endpoints** (AWS PrivateLink) for ECR to keep this traffic entirely within the AWS backbone. This improves security by preventing traffic from traversing the internet, and also reduces NAT Gateway data processing costs. We would need to create:
-- Interface VPC Endpoints for ECR API (`com.amazonaws.<region>.ecr.api`) and Docker registry (`com.amazonaws.<region>.ecr.dkr`).
-- A Gateway VPC Endpoint for S3 (`com.amazonaws.<region>.s3`), as ECR stores image layers in S3.
+### 🔒 Security Configurations
+- [ ] **ECR Image Pulls via AWS Backbone**: Configure Interface VPC Endpoints for ECR API/Docker registry and a Gateway VPC Endpoint for S3 to keep image pull traffic entirely within the AWS backbone.
+- [ ] **Dynamic Vault Secrets**: Transition from Vault's KV engine to the Database secret engine for dynamic, short-lived database credentials.
+- [ ] **Vault PKI for mTLS**: Utilize the Vault PKI secret engine to issue short-lived TLS certificates and enforce mutual TLS (mTLS) for pod-to-pod communication.
+- [ ] **EKS Secrets Encryption**: Enable envelope encryption for Kubernetes Secrets in EKS using an AWS KMS key.
+- [ ] **Network Policies (Pod Isolation)**: Implement a Kubernetes CNI that supports Network Policies (e.g., Calico or Cilium) to enforce a "default deny" rule.
+- [ ] **AWS WAF**: Attach AWS Web Application Firewall to the Application Load Balancer to protect against common web exploits.
+- [ ] **Amazon GuardDuty for EKS**: Enable GuardDuty EKS Protection for continuous monitoring of Kubernetes audit logs.
+- [ ] **Container Vulnerability Scanning**: Enable enhanced scanning in Amazon ECR to automatically scan Docker images on push.
 
-### 2. Additional Security Best Practices
-Based on a review of the current infrastructure, the following best practices are recommended for future iterations:
-- **Dynamic Vault Secrets**: Transition from Vault's KV (Key-Value) engine (currently used for static passwords) to the Database secret engine. This will allow Vault to automatically generate dynamic, short-lived database credentials on-demand for the application, significantly improving security.
-- **Vault PKI for mTLS**: Utilize the Vault PKI (Public Key Infrastructure) secret engine to issue short-lived TLS certificates. This can be used to enforce mutual TLS (mTLS) for secure, encrypted pod-to-pod communication within the cluster.
-- **EKS Secrets Encryption**: Enable envelope encryption for Kubernetes Secrets in EKS using an AWS KMS key. Currently, secrets are encrypted by default at the EBS volume level, but KMS integration provides an additional layer of defense-in-depth.
-- **Network Policies (Pod Isolation)**: Implement a Kubernetes CNI that supports Network Policies (like Calico or Cilium) to enforce a "default deny" rule for pod-to-pod communication, ensuring pods can only talk to intended destinations.
-- **AWS WAF**: Attach AWS Web Application Firewall to the Application Load Balancer to protect the application against common exploits like SQL injection and cross-site scripting (XSS).
-- **Amazon GuardDuty for EKS**: Enable GuardDuty EKS Protection to continuously monitor Kubernetes audit logs and detect malicious or suspicious activity within the cluster.
-- **Container Vulnerability Scanning**: Enable basic or enhanced scanning in Amazon ECR to automatically scan Docker images for OS and package vulnerabilities on push.
+### 📊 Observability Setup
+- [ ] **Fluent Bit Log Forwarding**: Deploy and configure Fluent Bit resources to collect container logs and forward them to Grafana/Loki.
+- [ ] **Grafana Dashboard Creation**: Create and import comprehensive Grafana dashboards for application-specific metrics and infrastructure monitoring.
+- [ ] **Metric-Based Alerts**: Configure Prometheus Alertmanager rules to trigger alerts based on critical metrics (e.g., high CPU/Memory usage, pod crash loops).
+- [ ] **Log-Based Alerts**: Set up alerting mechanisms based on specific log patterns (e.g., application errors, unauthorized access attempts) using Grafana Loki.
+
+### 🚀 Other Important Steps
+- [ ] **Automated Backups**: Implement automated backup and snapshot policies for the RDS PostgreSQL database.
+- [ ] **Disaster Recovery Testing**: Define and test a comprehensive disaster recovery (DR) plan.
+- [ ] **Cost Optimization**: Analyze resource usage and implement cost-saving measures like Spot Instances for non-critical workloads.
