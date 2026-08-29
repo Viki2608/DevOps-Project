@@ -2,6 +2,8 @@ name: "PR Build - Terraform"
 
 on:
   pull_request:
+    paths:
+      - 'terraform/**'
 
 jobs:
   security-scan:
