@@ -20,6 +20,8 @@ The infrastructure is provisioned on AWS using Terraform and consists of the fol
 
 ### Architecture Diagram
 
+[View on Eraser![](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty/preview?diagram=bDv3PDw8WPqLbHnZ-ArkJ&type=embed)](https://app.eraser.io/workspace/q0lRsQC3efsWUOR1j7Ty?diagram=bDv3PDw8WPqLbHnZ-ArkJ)
+
 ```mermaid
 graph TD
     User([User/Browser]) --> ALB[AWS Load Balancer]
