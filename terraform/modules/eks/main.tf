@@ -106,7 +106,7 @@ resource "aws_eks_pod_identity_association" "app_sa" {
 resource "aws_security_group" "eks_nodes" {
   name        = "${var.project_name}-eks-nodes-sg"
   description = "Security group for EKS nodes"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
   tags = {
     Name = "${var.project_name}-eks-nodes-sg"
@@ -116,7 +116,7 @@ resource "aws_security_group" "eks_nodes" {
 # Allow EKS nodes to send traffic to RDS on port 5432
 resource "aws_vpc_security_group_egress_rule" "eks_to_rds" {
   security_group_id            = aws_security_group.eks_nodes.id
-  referenced_security_group_id = aws_security_group.rds.id
+  referenced_security_group_id = var.rds_security_group_id
   from_port                    = 5432
   to_port                      = 5432
   ip_protocol                  = "tcp"

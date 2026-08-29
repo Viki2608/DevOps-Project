@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-app
+  namespace: default
+  labels:
+    app: py-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: py-app
+  template:
+    metadata:
+      labels:
+        app: py-app
+    spec:
+      serviceAccountName: app-service-account
+      containers:
+      - name: py-app
+        image: 8byte-app-repo:latest # Note: CI/CD will replace this with actual ECR image URI
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "db-8byte-app-postgres.xxxxxxxx.us-east-1.rds.amazonaws.com" # Should be injected or use a configmap/secret
+        - name: DB_NAME
+          value: "appdb"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10

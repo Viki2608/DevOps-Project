@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: py-app-service
+  namespace: default
+  labels:
+    app: py-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: py-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000

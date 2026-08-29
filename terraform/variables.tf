@@ -37,3 +37,9 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
+
+variable "github_token" {
+  description = "GitHub PAT for Flux GitOps"
+  type        = string
+  sensitive   = true
+}
