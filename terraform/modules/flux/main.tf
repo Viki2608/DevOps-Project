@@ -8,5 +8,6 @@ terraform {
 }
 
 resource "flux_bootstrap_git" "this" {
-  path = "k8s"
+  path               = "k8s"
+  embedded_manifests = true
 }

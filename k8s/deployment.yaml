@@ -23,9 +23,15 @@ spec:
         - containerPort: 5000
         env:
         - name: DB_HOST
-          value: "db-8byte-app-postgres.xxxxxxxx.us-east-1.rds.amazonaws.com" # Should be injected or use a configmap/secret
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DB_HOST
         - name: DB_NAME
-          value: "appdb"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DB_NAME
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -38,13 +44,13 @@ spec:
               key: password
         livenessProbe:
           httpGet:
-            path: /health
+            path: /healthcheck
             port: 5000
           initialDelaySeconds: 15
           periodSeconds: 20
         readinessProbe:
           httpGet:
-            path: /health
+            path: /readyz
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 10

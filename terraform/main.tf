@@ -17,7 +17,6 @@ module "rds" {
   db_password     = var.db_password
 }
 
-
 module "ecr" {
   source       = "./modules/ecr"
   project_name = var.project_name
@@ -33,9 +32,23 @@ module "eks" {
   rds_security_group_id = module.rds.rds_security_group_id
 }
 
+module "vault" {
+  source     = "./modules/vault"
+  depends_on = [module.eks]
+}
+
+module "vso" {
+  source     = "./modules/vso"
+  depends_on = [module.eks, module.vault]
+}
+
+module "prometheus" {
+  source     = "./modules/prometheus"
+  depends_on = [module.eks]
+}
+
 module "flux" {
   source      = "./modules/flux"
   environment = var.environment
-
-  depends_on = [module.eks]
+  depends_on  = [module.eks]
 }
