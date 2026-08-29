@@ -55,6 +55,31 @@ jobs:
           name: pytest-results
           path: ./app/pytest-report.xml
 
+#   sonarcloud:
+#     name: Static Code Analysis (SonarCloud)
+#     runs-on: ubuntu-latest
+#     needs: unit-tests
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           
+#       - name: SonarCloud Scan
+#         uses: sonarsource/sonarcloud-github-action@master
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#         with:
+#           projectBaseDir: app
+#           args: >
+#             -Dsonar.organization=your-organization
+#             -Dsonar.projectKey=your-project-key
+#             -Dsonar.python.version=3.10
+#             -Dsonar.sources=.
+#             -Dsonar.tests=.
+#             -Dsonar.test.inclusions=test_app.py
+
   security-scan:
     name: Build & Security Scan
     runs-on: ubuntu-latest
