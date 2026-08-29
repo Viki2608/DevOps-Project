@@ -171,6 +171,8 @@ Currently, EKS nodes in private subnets pull images from ECR by routing traffic 
 
 ### 2. Additional Security Best Practices
 Based on a review of the current infrastructure, the following best practices are recommended for future iterations:
+- **Dynamic Vault Secrets**: Transition from Vault's KV (Key-Value) engine (currently used for static passwords) to the Database secret engine. This will allow Vault to automatically generate dynamic, short-lived database credentials on-demand for the application, significantly improving security.
+- **Vault PKI for mTLS**: Utilize the Vault PKI (Public Key Infrastructure) secret engine to issue short-lived TLS certificates. This can be used to enforce mutual TLS (mTLS) for secure, encrypted pod-to-pod communication within the cluster.
 - **EKS Secrets Encryption**: Enable envelope encryption for Kubernetes Secrets in EKS using an AWS KMS key. Currently, secrets are encrypted by default at the EBS volume level, but KMS integration provides an additional layer of defense-in-depth.
 - **Network Policies (Pod Isolation)**: Implement a Kubernetes CNI that supports Network Policies (like Calico or Cilium) to enforce a "default deny" rule for pod-to-pod communication, ensuring pods can only talk to intended destinations.
 - **AWS WAF**: Attach AWS Web Application Firewall to the Application Load Balancer to protect the application against common exploits like SQL injection and cross-site scripting (XSS).
