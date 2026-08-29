@@ -3,6 +3,7 @@ import psycopg2
 import os
 from prometheus_flask_exporter import PrometheusMetrics
 
+# test
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 
